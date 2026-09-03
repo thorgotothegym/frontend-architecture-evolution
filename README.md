@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend Architecture Evolution
 
-## Getting Started
+A real-world walkthrough of how frontend architecture actually evolves as a
+team grows — not the tidy, idealized version you see in most "best
+practices" repos, but the messy, honest one: what teams optimize for at
+each stage, what they deliberately leave out, and what eventually breaks.
 
-First, run the development server:
+Every era in this repo follows the same fictional product, **FlowDesk** — a
+small internal team-operations tool. FlowDesk starts as a simple team
+directory. As the team behind it grows, so does the product: task
+management gets added, then notifications and scheduling. Each new feature
+surface is also what forces the architecture to change — the product and
+the architecture evolve together, not separately.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This repo is not a tutorial on "the right way" to structure a frontend
+app. It's a case study in tradeoffs: what a small team chooses not to do
+yet, why that's usually the correct call, and what eventually makes that
+call expensive.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## The timeline
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Era | Team size | What FlowDesk gained | What architecture had to answer |
+|---|---|---|---|
+| [Era 1 — Two-Person Foundation](eras/era-1-two-person-foundation) | 2 developers | A simple team directory | Minimal tooling, type-based structure, no ceremony |
+| [Era 2 — Component Explosion](eras/era-2-component-explosion) | 3 developers | Task management | Component/prop sprawl, testing basics, Storybook, a late data-layer migration |
+| [Era 3 — Coexistence](eras/era-3-coexistence) | Mid-to-large team | Notifications & scheduling | Type-based and feature-based structure coexisting on purpose |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Why "eras" and not branches
 
-## Learn More
+Each era lives in its own folder under `main` — not a Git branch. Branches
+are built for parallel or in-progress work; this repo is a finished
+timeline meant to be browsed, not merged. Folders mean anyone can open two
+eras side by side and compare them directly, with a single `git clone`.
 
-To learn more about Next.js, take a look at the following resources:
+## What makes this different
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Most architecture repos show you the destination. This one shows the
+path — including the parts that don't look good in hindsight. A few
+examples you'll find inside:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- A component that grew a second, redundant prop (`compact` /
+  `isCompact`) because renaming the old one wasn't worth the risk under
+  delivery pressure — and it's still like that.
+- A design token system that started as hardcoded values in the app,
+  which worked fine until components needed to be shared across teams.
+- A data-fetching migration (to React Query) that arrived late enough
+  that it meant rewriting hooks that already worked, not just writing
+  new ones.
+- A testing gap (page-level tests) that was a deliberate prioritization
+  call in one era — and became a persistent, unresolved cost by the next.
 
-## Deploy on Vercel
+## How to read this repo
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Each era's folder contains:
+- A `README.md` explaining the team context, what changed, why, and what
+  was deliberately left undone
+- Illustrative code (components, hooks, config) representative of that
+  era's conventions — not production code, but written to feel like it
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+You can read the READMEs in order for the full story, or jump straight
+into any era's code if you're only interested in one transition.
+
+## About this repo
+
+This project is inspired by real, hands-on experience scaling a frontend
+codebase alongside a growing team. Product names, team sizes, timelines,
+and code have been fictionalized and simplified — this is not the source
+code of any real company or product, and no confidential or proprietary
+information is included.
